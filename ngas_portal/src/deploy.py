@@ -550,6 +550,8 @@ def content_install():
     #git_clone_tar()
     #run('cp /tmp/ngas_portal/data/NGAST.zexp {0}/ngas/import/')
     put('../data/NGAS.zexp {0}/ngas/import/'.format(env.PORTAL_DIR_ABS))
+    run('mkdir NGAS', warn_only=True)
+    put('../data/ngas.sqlite {0}/../NGAS/'.format(env.PORTAL_DIR_ABS))
 
 
 @task
@@ -672,12 +674,13 @@ def test_deploy():
     if env.postfix:
         postfix_config()
     user_setup()
-    ppath = check_python()
-    if not ppath:
-        python_setup()
-    virtualenv_setup()
-    zope_install()
-    content_install()
+    with settings(user='ngas'):
+        ppath = check_python()
+        if not ppath:
+            python_setup()
+        virtualenv_setup()
+        zope_install()
+        content_install()
     #init_deploy()
 
 @task
