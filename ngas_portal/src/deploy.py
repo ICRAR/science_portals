@@ -547,8 +547,9 @@ def content_install():
     """
     Install the content of the NGAS portal
     """
-    git_clone_tar()
-    run('cp /tmp/ngas_portal/data/NGAST.zexp {0}/ngas/import/')
+    #git_clone_tar()
+    #run('cp /tmp/ngas_portal/data/NGAST.zexp {0}/ngas/import/')
+    put('../data/NGAS.zexp {0}/ngas/import/'.format(env.PORTAL_DIR_ABS))
 
 
 @task
