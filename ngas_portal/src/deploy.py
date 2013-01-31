@@ -49,12 +49,14 @@ GITREPO = 'gitsrv.icrar.org:ngas_portal'
 ZOPE_URL = 'http://download.zope.org/Zope2/index/2.13.19 Zope2'
 
 YUM_PACKAGES = [
+   'autoconf',
    'python27-devel',
    'git',
    'readline-devel',
    'sqlite-devel',
    'make',
-   'wget.x86_64',     
+   'wget.x86_64',
+   'gcc',   
 ]
 
 APT_PACKAGES = [
@@ -515,7 +517,7 @@ def virtualenv_setup():
     check_python()
     print "CHECK_DIR: {0}".format(check_dir(env.PORTAL_DIR_ABS))
     if check_dir(env.PORTAL_DIR_ABS):
-        abort('ngas_rt directory exists already')
+        abort('{0} directory exists already'.format(env.PORTAL_DIR_ABS))
         
     with cd('/tmp'):
         run('wget --no-check-certificate -q https://raw.github.com/pypa/virtualenv/master/virtualenv.py')
@@ -537,9 +539,9 @@ def zope_install():
     
     with cd(env.PORTAL_DIR_ABS):
         virtualenv('easy_install -i {0} Zope2'.format(ZOPE_URL))
-        virtualenv('easy_install -quiet Products.ZSQLMethods')
-        virtualenv('easy_install -quiet Products.SQLAlchemyDA')
-        run('mkzopeinstance -d {0}/ngas -u {1}:{2}'.format(env.PORTAL_DIR_ABS, 'admin'))
+        virtualenv('easy_install Products.ZSQLMethods')
+        virtualenv('easy_install Products.SQLAlchemyDA')
+        virtualenv('mkzopeinstance -d {0}/ngas -u {1}:{2}'.format(env.PORTAL_DIR_ABS, 'admin','marv4zope'))
 
 
 @task
@@ -547,11 +549,12 @@ def content_install():
     """
     Install the content of the NGAS portal
     """
+    set_env()
     #git_clone_tar()
     #run('cp /tmp/ngas_portal/data/NGAST.zexp {0}/ngas/import/')
-    put('../data/NGAS.zexp {0}/ngas/import/'.format(env.PORTAL_DIR_ABS))
+    put('data/NGAST.zexp', '{0}/ngas/import/'.format(env.PORTAL_DIR_ABS))
     run('mkdir NGAS', warn_only=True)
-    put('../data/ngas.sqlite {0}/../NGAS/'.format(env.PORTAL_DIR_ABS))
+    put('data/ngas.sqlite', '{0}/../NGAS/'.format(env.PORTAL_DIR_ABS))
 
 
 @task
