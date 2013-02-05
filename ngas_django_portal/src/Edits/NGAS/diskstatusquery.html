@@ -1,0 +1,29 @@
+{% include "NGAS/header.html" %}
+
+<h2>NGAS disk status</h2>
+Enter query parameters:
+<form action="/NGAS/disks/query/status/search/page1/" method="post">
+{% csrf_token %}
+<table>
+	<tr>
+		<th align="left">Disk id</th>
+		<td><input type="text" name="disk_id" value="%" /></td>
+	</tr>
+	<tr>
+		<th align="left">Host id</th>
+		<td><input type="text" name="host_id" value="%" /></td>
+	</tr>
+	<tr>
+		<th align="left">Logical name</th>
+		<td><input type="text" name="logical_name" value="%" /></td>
+	</tr>
+	<tr>
+		<td colspan="2" align="center"><input type="SUBMIT" name="SUBMIT" value="Submit Query"></td>
+	</tr>
+</table>
+</form>
+
+<a href="/NGAS/disks/">Disk Directory</a>
+<br/><a href="/NGAS/home/">Home</a>
+	
+{% include "NGAS/footer.html" %}

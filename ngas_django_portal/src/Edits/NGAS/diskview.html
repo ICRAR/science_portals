@@ -1,0 +1,56 @@
+{% include "NGAS/header.html" %}
+
+Number of results: {{ results.paginator.count }}<br/><br/>
+
+{% if results %}
+    <table border="">
+		<tr>
+			<th>Logical Name</th>
+			<th>Disk ID</th>
+			<th>Installation Date</th>
+			<th>Archive</th>
+			<th>Slot ID</th>
+			<th>Number of Files</th>
+			<th>Available MB</th>
+			<th>Bytes Stored</th>
+			<th>Host ID</th>
+		</tr>
+		{% for disk in results %}
+			<tr>
+				<td>{{disk.logical_name}}</td>
+				<td><a href="/NGAS/disks/details/{{ disk.disk_id }}/">{{ disk.disk_id }}</a></td>
+				<td>{{disk.installation_date}}</td>
+				<td>{{disk.archive}}</td>
+				<td>{% if disk.slot_id = '' %}None{% else %}{{ disk.slot_id }}{% endif %}</td>
+				<td>{{ disk.number_of_files }}</td>
+				<td>{{ disk.available_mb }}</td>
+				<td>{{ disk.bytes_stored }}</td>
+				<td>{% if disk.host_id = '' %}None{% else %}<a href="/NGAS/hosts/details/{{ disk.host_id.pk }}/">{{ disk.host_id.host_id }}</a>{% endif %}</td>
+			</tr>
+		{% endfor %}
+	</table><br/>
+{% else %}
+    <p>No results exist.</p>
+{% endif %}
+
+<div class="pagination">
+    <span class="step-links">
+		{% if results.has_previous %}
+            <a href="{{ urlstring }}&page={{ results.previous_page_number }}">Previous Page</a>
+		{% endif %}
+		
+		<span class="current">
+			[Page {{ results.number }} of {{ results.paginator.num_pages }}]
+		</span>
+		
+        {% if results.has_next %}
+            <a href="{{ urlstring }}&page={{ results.next_page_number }}">Next Page</a>
+        {% endif %}
+    </span>
+</div>
+
+
+<br/><a href="/NGAS/disks/">Disk Directory</a>
+<br/><a href="/NGAS/home/">Home</a>
+
+{% include "NGAS/footer.html" %}

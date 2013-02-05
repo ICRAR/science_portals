@@ -1,0 +1,18 @@
+{% include "NGAS/header.html" %}
+
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/styles.css" />
+
+<h2>NGAST Internal Home Page</h2>
+This system is designed to allow the operators of the NGAS units to view data in a more formulated structure.
+<h3>Choose a directory</h3>
+    
+<ul>
+	<dt><a href="/NGAS/hosts/">View Host Directory</a></dt>
+	<dd>View or Query the Host Table</dd>
+	<dt><a href="/NGAS/disks/">View Disk Directory</a></dt>
+	<dd>View or Query the Disk Table</dd>
+	<dt><a href="/NGAS/files/">View File Directory</a></dt>
+	<dd>View or Query the File Table</dd>
+</ul>
+
+{% include "NGAS/footer.html" %}

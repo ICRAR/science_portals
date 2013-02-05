@@ -1,0 +1,28 @@
+{% include "NGAS/header.html" %}
+
+<h2>NGAST File Query Page</h2>
+Query the Files table.
+<h3>Queries:</h3>
+<ul>
+	<dt><a href="/NGAS/files/query/opt1/page1/">Get File Last Archived</a></dt>
+	<dd>Query to return the last file archived in the system i.e. has the most recent ingestion_date</dd>
+	<dt><a href="/NGAS/files/query/opt2/">Get Files Within Date Range</a></dt>
+	<dd>Returns all files within a user specified date range, default set to last 24 hours.</dd>
+	<dt><a href="/NGAS/files/query/opt3/">File Search Form</a></dt>
+	<dd>Query the files table based on optional parameters (file id, disk id, ingestion date and/or file status)</dd>
+	<dt><a href="/NGAS/files/query/opt4/">Get Total File Statistics</a></dt>
+	<dd>Displays the total number of frames and volume data.</dd>
+	<dt><a href="/NGAS/files/query/opt5/">File Status Check</a></dt>
+	<dd>Query the ngas_files table for the file_status column and generate a report grouped by disk_id.</dd>
+	<dt><a href="/NGAS/files/query/opt6/">Get Insert Statistics</a></dt>
+	<dd>Retrieve the number of distinct frames and the corresponding amount of GB of data archived during a specified period.</dd>
+	<dt><a href="/NGAS/files/query/opt7/">Disks with File</a></dt>
+	<dd>Retrieves which disks are files with a certain file_id.</dd>
+</ul>
+    
+
+
+<li><a href="/NGAS/files/query/all/">View All File Entries</a></li>
+<li><a href="/NGAS/home/">Home</a></li>
+
+{% include "NGAS/footer.html" %}

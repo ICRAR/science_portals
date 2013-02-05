@@ -1,0 +1,23 @@
+{% include "NGAS/header.html" %}
+
+This page shows a total summary of the files and data volume controlled by NGAS.
+
+<center>
+	<table border="">
+		<tbody>
+			<tr>
+				<th bgcolor="#cccccc">Terabytes</th>
+				<th bgcolor="#cccccc">Files</th>
+			</tr>
+			<tr>
+				<td align="center">{{totalSize|floatformat:2}}</td>
+				<td align="center"><a href="/NGAS/files/query/all/page1/">{{numFiles}}<a/></td>
+			</tr>
+		</tbody>
+	</table>
+</center>
+
+<a href="/NGAS/files/">File Directory</a><br/>
+<a href="/NGAS/home/">Home</a>
+
+{% include "NGAS/footer.html" %}

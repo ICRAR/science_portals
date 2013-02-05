@@ -1,0 +1,30 @@
+{% include "NGAS/header.html" %}
+
+<form action="/NGAS/files/query/opt3/page1/" method="post">
+{% csrf_token %}
+<h2>NGAS Files Search Form</h2>
+Enter query parameters:
+<table>
+	<tr>
+		<td>File id:</td>
+		<td><input type="text" name="file_id" value="%"/><td/>
+	</tr>
+	<tr>
+		<td>Disk id:</td>
+		<td><input type="text" name="disk_id" value="%"/><td/>
+	</tr>
+	<tr>
+		<td>Ingestion date:</td>
+		<td><input type="text" name="ingestion_date" value="%"/><td/>
+	</tr>
+	<tr>
+		<td>File status:</td>
+		<td><input type="text" name="file_status" value="%"/><td/>
+	</tr>
+</table>
+<p style="text-indent:50px;"><input type="submit" value="Search" /><p/>
+</form>
+<p><a href="/NGAS/files/">File Directory</a><br/>
+<a href="/NGAS/home/">Home</a></p>
+	
+{% include "NGAS/footer.html" %}

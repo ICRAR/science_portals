@@ -1,0 +1,87 @@
+{% include "NGAS/header.html" %}
+
+<table>
+	<tr bgcolor="#AAAAAA">
+		<th align="left">Logical name</th>
+		<td>{{ disk.logical_name }}</td>
+	</tr>
+	<tr>
+		<th align="left">Disk id</th>
+		<td>{{ disk.disk_id }}</td>
+	</tr>
+	<tr>
+		<th align="left">Archive</th>
+		<td>{{ disk.archive }}</td>
+	</tr>
+	<tr>
+		<th align="left">Host id</th>
+		<td>{% if disk.host_id = '' %}None{% else %}<a href="/NGAS/hosts/details/{{ disk.host_id.pk }}/">{{ disk.host_id.host_id }}</a>{% endif %}</td>
+	</tr>
+	<tr>
+		<th align="left">Slot id</th>
+		<td>{% if disk.slot_id = '' %}None{% else %}{{ disk.slot_id }}{% endif %}</td>
+	</tr>
+	<tr>
+		<th align="left">Mounted</th>
+		<td>{% if disk.mounted = '' %}None{% else %}{{ disk.mounted }}{% endif %}</td></tr>
+	<tr>
+		<th align="left">Mount point</th>
+		<td>{% if disk.mount_point = '' %}None{% else %}{{ disk.mount_point }}{% endif %}</td>
+	</tr>
+	<tr>
+		<th align="left">Last host_id</th>
+		<td>{% if disk.last_host_id = '' %}None{% else %}{{ disk.last_host_id }}{% endif %}</td>
+	</tr>
+	<tr>
+		<th align="left">Number of files</th>
+		<td><a href="/NGAS/files/query/diskfiles/page1/?disk_id={{ disk.disk_id }}">{{ disk.number_of_files }}</a></td>
+	</tr>
+	<tr>
+		<th align="left">Available mb</th>
+		<td>{{ disk.available_mb }}</td>
+	</tr>
+	<tr>
+		<th align="left">Bytes stored</th>
+		<td>{{ disk.bytes_stored }}</td>
+	</tr>
+	<tr>
+		<th align="left">Total disk write time</th>
+		<td>{% if disk.total_disk_write_time = '' %}None{% else %}{{ disk.total_disk_write_time }}{% endif %}</td>
+	</tr>
+	<tr>
+		<th align="left">Completed</th>
+		<td>{{ disk.completed }}</td>
+	</tr>
+	<tr>
+		<th align="left">Completion date</th>
+		<td>{% if disk.completion_date = '' %}None{% else %}{{ disk.completion_date }}{% endif %}</td>
+	</tr>
+	<tr>
+		<th align="left">Checksum</th>
+		<td>{% if disk.checksum = '' %}None{% else %}{{ disk.checksum }}{% endif %}</td>
+	</tr>
+	<tr>
+		<th align="left">Last check</th>
+		<td>{% if disk.last_check = '' %}None{% else %}{{ disk.last_check }}{% endif %}</td>
+	</tr>
+	<tr>
+		<th align="left">Installation date</th>
+		<td>{{ disk.installation_date }}</td>
+	</tr>
+	<tr>
+		<th align="left">Type</th>
+		<td>{{ disk.type }}</td>
+	</tr>
+	<tr>
+		<th align="left">Manufacturer</th>
+		<td>{% if disk.manufacturer = '' %}None{% else %}{{ disk.manufacturer }}{% endif %}</td>
+	</tr>
+	<tr>
+		<th align="left">Disk history</th>
+		<td><a href="/NGAS/disks/details/{{ disk.disk_id }}/history/">History</a></td>
+</table>
+
+<br/><a href="/NGAS/disks/">Disk Directory</a>
+<br/><a href="/NGAS/home/">Home</a>
+	
+{% include "NGAS/footer.html" %}
