@@ -1,5 +1,5 @@
 """
-Fabric file for installing NGAS servers
+Fabric file for installing NGAS portal servers
 
 Test deployment on EC2 is simple as it only runs on one server
 fab test_deploy
