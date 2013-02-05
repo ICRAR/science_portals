@@ -1,0 +1,26 @@
+NGAS Zope Portal Installation LOG
+===================================
+
+virtualenv --no-site-packages ngas_portal
+cd ngas_portal/
+bin/easy_install -i http://download.zope.org/Zope2/index/2.13.19 Zope2
+bin/easy_install -v Products.ZSQLMethods
+bin/easy_install -v Products.SQLAlchemyDA
+scp awicenec@macbook24.icrar.org:Downloads/NGAST.zexp .
+bin/mkzopeinstance 
+mv NGAST.zexp ngas/import/
+
+
+>>> Modified the SQLAlchemyDA around line 248 to return 1 if the getPool method does not work.
+vi lib/python2.7/site-packages/Products.SQLAlchemyDA-0.5.1-py2.7.egg/Products/SQLAlchemyDA/da.py
+
+
+Inside the Zope management interface
+-------------------------------------
+1) Edited the DbConnection to point to the correct sqlite file
+   sqlite:////home/ngas/NGAS/ngas.sqlite
+   
+2) Edited NGAS_files_full_result_req to contain the correct NGAS host for file retrieval
+   <td><a href="http://mwadas5.ivec.org:7777/RETRIEVE?file_id=<dtml-var file_id>&file_version=<dtml-var Version>"><dtml-var file_id></a></td></tr>
+   TODO: Should find a better solution for that.
+   
