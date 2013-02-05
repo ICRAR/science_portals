@@ -1,0 +1,85 @@
+{% include "NGAS/header.html" %}
+
+<table>
+	<tr>
+		<td width="60%" align="left">
+			<table>
+				<tr>
+					<td bgcolor="#AAAAAA"><a href="/NGAS/disks/query/status/">Define new query</a></td>
+					<td bgcolor="#F0F0F0"><a href="{{ urlstring2 }}&logical_name=%">All disks</a></td>
+					<td bgcolor="#F0F0F0"><a href="{{ urlstring2 }}&logical_name=%_M_%">All Main disks</a></td>
+					<td bgcolor="#F0F0F0"><a href="{{ urlstring2 }}&logical_name=%_R_%">All Replication disks</a></td>
+				</tr>
+			</table>
+		</td>
+		<td width="60%" align="right">
+			<table border="">
+				<tr>
+					<td bgcolor="#99CC32"><a href="{{ urlstring1 }}&refine1=1">mounted disk</a></td>
+					<td bgcolor="#E47833"><a href="{{ urlstring1 }}&refine1=0">travelling</a></td>
+					<td><a href="{{ urlstring1 }}&refine1=unknown">unknown</a></td>
+					<td bgcolor="#AAAAAA"><a href="{{ urlstring1 }}&refine1=None">display all</a></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+{% if disks %}
+	<table width="100%">
+		<tr>
+			<th>Label</th>
+			<th>Full</th>
+			<th>Number of files</th>
+			<th>Completed</th>
+			<th>Slot</th>
+			<th>Status</th>
+			<th>Update</th>
+			<th>Log Book</th>
+		</tr>
+		{% for disk in disks %}
+			<tr>
+				<td align="center"><a href="/NGAS/disks/details/{{ disk.disk_id }}/">{{ disk.logical_name }}</a></td>
+				<td align="center">
+					<script type="text/javascript">
+						var summation = ({{disk.bytes_stored}} / ({{ disk.bytes_stored }} + ({{ disk.available_mb }} * 1024))) * 100;
+						
+						function roundVal(val)
+						{
+							var dec = 2;
+							var result = Math.round(val*Math.pow(10,dec))/Math.pow(10,dec);
+							return result;
+						}
+
+						document.write(roundVal(summation));
+					</script>
+					%
+				</td>
+				<td align="center"><a href="/NGAS/files/query/diskfiles/page1/?disk_id={{ disk.disk_id }}">{{ disk.number_of_files }}</a></td>
+				<td align="center">{{ disk.completed }}</td>
+				<td align="center">{% if disk.slot_id = '' %}None{% else %}{{ disk.slot_id }}{% endif %}</td>
+				<td align="center" 
+				{% if disk.mounted = 1 %}
+				bgcolor="99CC32"
+				{% endif %}
+				{% if disk.mount_point = '--%' %}
+				bgcolor="E47833"
+				{% endif %}
+				>{% if disk.mount_point = '' %}Not Mounted{% elif disk.mount_point = '--%' %}Travelling{% else %}{{ disk.mount_point }}{% endif %}</td>
+				<td align="center">
+					<form action="/NGAS/disks/query/status/update/?disk_id={{ disk.disk_id}}" method="post">
+						{% csrf_token %}
+						<input type="submit" value="Update Status" />
+					</form>
+				</td>
+				<td align="center"><input type="submit" value="View" /><input type="submit" value="Create" /></td>
+			</tr>
+		{% endfor %}		
+	</table>
+{% else %}
+No Results Exist!
+{% endif %}
+
+<br/><a href="/NGAS/disks/">Disk Directory</a>
+<br/><a href="/NGAS/home/">Home</a>
+
+{% include "NGAS/footer.html" %}

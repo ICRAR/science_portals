@@ -1,0 +1,37 @@
+{% include "NGAS/header.html" %}
+
+{% if hist %}
+	<table>
+		<tr>
+			<th>Logical Name</th>
+			<th>Disk id</th>
+			<th>Hist date</th>
+			<th>Hist origin</th>
+			<th>Hist synopsis</th>
+			<th>Hist descr mime type</th>
+			<th>Hist descr</th>
+		</tr>
+		{% for entry in hist %}
+		
+		<tr>
+			<td>{{entry.disk_id.logical_name}}</td>
+			<td><a href="/NGAS/disks/details/{{ entry.disk_id.disk_id }}/">{{entry.disk_id.disk_id}}</a></td>
+			<td>{{entry.hist_date}}</td>
+			<td>{{entry.hist_origin}}</td>
+			<td>{{entry.hist_synopsis}}</td>
+			<td>{% if entry.hist_descr_mime_type = '' %}None{% else %}{{entry.hist_descr_mime_type}}{% endif %}</td>
+			<td>{% if entry.hist_descr = '' %}None{% else %}<a href="/NGAS/disks/details/{{ entry.disk_id.disk_id }}/history/{{entry.id}}/description/">Show Entry</a>{% endif %}</td>
+		</tr>
+		
+		{% endfor %}
+			
+		
+	</table>
+{% else %}
+	Search has returned no history entries.
+{% endif %}
+
+<br/><a href="/NGAS/disks/">Disk Directory</a>
+<br/><a href="/NGAS/home/">Home</a>
+	
+{% include "NGAS/footer.html" %}

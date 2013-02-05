@@ -1,0 +1,40 @@
+{% include "NGAS/header.html" %}
+
+<p>The table below contains the file_ids of all files on disk <b>{{name}}</b> which have the status flag set to {{status}}.</p>
+{% if files %}
+<center>
+	<table border="">
+		<tr>
+			<th bgcolor="#cccccc">File id</th>
+		</tr>
+		{% for file in files %}
+		<tr>
+			<td align="center"><a href="/NGAS/files/details/{{ file.id }}/">{{file.file_id}}</a></td>
+		</tr>
+		{% endfor %}
+	</table>
+</center>
+{% else %}
+<p>No results exist</p>
+{% endif %}
+
+<div class="pagination">
+    <span class="step-links">
+		{% if files.has_previous %}
+            <a href="?page={{ files.previous_page_number }}">Previous</a>
+        {% endif %}
+
+		<span class="current">
+            [Page {{ files.number }} of {{ files.paginator.num_pages }}]
+        </span>
+		
+        {% if files.has_next %}
+            <a href="?page={{ files.next_page_number }}">Next</a>
+        {% endif %}
+    </span>
+</div>
+
+<br/><a href="/NGAS/files/">File Directory</a><br/>
+<a href="/NGAS/home/">Home</a>
+
+{% include "NGAS/footer.html" %}

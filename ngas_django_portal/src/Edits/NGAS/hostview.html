@@ -1,0 +1,51 @@
+{% include "NGAS/header.html" %}
+
+Number of results: {{ results.paginator.count }}<br/><br/>
+
+{% if results %}
+    <table border="">
+		<tr>
+			<th>Host ID</th>
+			<th>Srv Port</th>
+			<th>IP Address</th>
+			<th>Domain</th>
+			<th>Cluster Name</th>
+			<th>Installation Date</th>
+		</tr>
+		{% for host in results %}
+			<tr>
+				<td><a href="/NGAS/hosts/details/{{ host.id }}/">{{ host.host_id }}</a></td>
+				<td>{{host.srv_port}}</td>
+				<td>{{host.ip_address}}</td>
+				<td>{{host.domain}}</td>
+				<td>{% if host.cluster_name = '' %}None{% else %}{{ host.cluster_name }}{% endif %}</td>
+				<td>{% if host.installation_date = '' %}None{% else %}{{ host.installation_date }}{% endif %}</td>
+			</tr>
+		{% endfor %}
+    </table><br/>
+{% else %}
+    <p>No results exist.</p>
+{% endif %}
+
+<div class="pagination">
+    <span class="step-links">
+		{% if results.has_previous %}
+            <a href="{{ urlstring }}&page={{ results.previous_page_number }}">Previous Page</a>
+		{% endif %}
+		
+		<span class="current">
+			[Page {{ results.number }} of {{ results.paginator.num_pages }}]
+		</span>
+		
+        {% if results.has_next %}
+            <a href="{{ urlstring }}&page={{ results.next_page_number }}">Next Page</a>
+        {% endif %}
+    </span>
+</div>
+
+
+<br/><a href="/NGAS/hosts/">Host Directory</a>
+<br/><a href="/NGAS/home/">Home</a>
+
+
+{% include "NGAS/footer.html" %}

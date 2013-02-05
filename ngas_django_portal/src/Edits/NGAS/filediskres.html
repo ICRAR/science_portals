@@ -1,0 +1,25 @@
+{% include "NGAS/header.html" %}
+
+{% if results %}
+	<table border="">
+		<tr>
+			<th>Logical name</th>
+			<th>Disk id</th>
+			<th>Cnt</th>
+		</tr>
+	{% for result in results %}
+		<tr>
+			<td>{{result.disk_id.logical_name}}</td>
+			<td><a href="/NGAS/disks/details/{{ result.disk_id.disk_id }}/">{{ result.disk_id.disk_id }}</a></td>
+			<td><a href="/NGAS/files/query/diskfiles/page1/?disk_id={{ result.disk_id.disk_id }}&file_id={{ file_id }}">{{ result.count }}</a></td>
+			</form>
+		</tr>
+	{%endfor%}
+	</table><br/>
+{% else %}
+    <p>No results exist.</p>
+{% endif %}
+<a href="/NGAS/files/">File Directory</a><br/>
+<a href="/NGAS/home/">Home</a>
+
+{% include "NGAS/footer.html" %}

@@ -1,0 +1,19 @@
+{% include "NGAS/header.html" %}
+
+<h2>NGAST Disk Query Page</h2>
+Query the Disks table.
+<h3>Queries:</h3>
+<ul>
+	<dt><a href="/NGAS/disks/query/opt1/">Get All Completed Disks</a></td>
+	<dd>Displays all disks where completed = 1.</dd>
+	<dt><a href="/NGAS/disks/query/history/">Get Disk History</a></td>
+	<dd>Displays the history for a specified disk by querying the disks_hist table.</dd>
+	<dt><a href="/NGAS/disks/query/status/">Disk Status Tool</a></td>
+	<dd>Tool to check (and change) the status of disks controlled by NGAS.</dd>
+</ul>
+
+<br/>
+<li><a href="/NGAS/disks/query/all/">View All Disk Entries</a></li>
+<li><a href="/NGAS/home/">Home</a></li>
+
+{% include "NGAS/footer.html" %}
