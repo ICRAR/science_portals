@@ -1,0 +1,7 @@
+248c248,251
+<         return self._wrapper._engine.pool.size() 
+---
+>         try:
+>            return self._wrapper._engine.pool.size()
+>         except:
+>            return 1
