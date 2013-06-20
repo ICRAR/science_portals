@@ -7,19 +7,7 @@ fab -f src/deploy.py test_deploy
 
 this will launch an EC2 instance create the user ngas and install Zope2 and the NGAS site content.
 
-After that it is still required to login to the instance and patch the SQLAlchemyDA and import the NGAS.zexp into the running server.
-
->>> Modified the SQLAlchemyDA around line 248 to return 1 if the getPool method does not work.
-vi lib/python2.7/site-packages/Products.SQLAlchemyDA-0.5.1-py2.7.egg/Products/SQLAlchemyDA/da.py
-
-    security.declareProtected(view_management_screens, 'getPoolSize')
-    def getPoolSize(self):
-        """ """
-        try:
-           return self._wrapper._engine.pool.size()
-        except:
-           return 1
-
+After that it is still required to login to the instance and import the NGAS.zexp into the running server.
 
 
 Launching the server as user ngas:
