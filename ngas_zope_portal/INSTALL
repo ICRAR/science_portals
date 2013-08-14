@@ -12,4 +12,42 @@ After that it is still required to login to the instance and import the NGAS.zex
 
 Launching the server as user ngas:
 
-ngas_portal/ngas/bin/zopectl start
+> ngas_portal/ngas/bin/zopectl start
+
+
+
+
+NOTE: It might be that the server is listening on IP address 127.0.0.1, depending on the IP configuration.
+This can be checked in the following way:
+
+> cat ngas_portal/ngas/log/event.log
+------
+2013-08-14T01:33:17 INFO ZServer HTTP server started at Wed Aug 14 01:33:17 2013
+	Hostname: 0.0.0.0
+	Port: 8080
+------
+2013-08-14T01:33:18 INFO Zope Ready to handle requests
+
+
+use the IP address reported at the Hostename above and do a ping:
+
+> ping 0.0.0.0
+PING 0.0.0.0 (127.0.0.1) 56(84) bytes of data.
+64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.029 ms
+64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.021 ms
+64 bytes from 127.0.0.1: icmp_seq=3 ttl=64 time=0.021 ms
+^C
+
+This now reports 127.0.0.1 and it means that the server indeed is listening on the
+localhost IP address only. This means that it is not accessible from anywhere else
+than the machine itself.
+
+This can be changed in the zope.conf file. Open the file with your favourite text editor (e.g. vi):
+
+> vi /home/ngas/ngas_portal/ngas/etc/zope.conf
+
+and search for the string 'ip-address'. Uncomment the line found there and change the IP address
+to the public IP address of the host the portal has been installed on. Then stop and start the zope server again.
+
+> ngas_portal/ngas/bin/zopectl stop
+> ngas_portal/ngas/bin/zopectl start
