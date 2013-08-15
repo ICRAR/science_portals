@@ -24,7 +24,7 @@ import time
 from fabric.api import run, sudo, put, env, require, local, task
 from fabric.context_managers import cd, hide, settings
 from fabric.contrib.console import confirm
-from fabric.contrib.files import append, sed, comment
+from fabric.contrib.files import append, sed, comment, exists
 from fabric.decorators import task, serial
 from fabric.operations import prompt
 from fabric.utils import puts, abort, fastprint
@@ -562,7 +562,8 @@ def content_install():
     #run('cp /tmp/ngas_portal/data/NGAST.zexp {0}/ngas/import/')
     put('data/NGAST.zexp', '{0}/ngas/import/'.format(env.PORTAL_DIR_ABS))
     run('mkdir NGAS', warn_only=True)
-    put('data/ngas.sqlite', '{0}/../NGAS/'.format(env.PORTAL_DIR_ABS))
+    if not exists('{0}/..NGAS/ngas.sqlite'.format(env.PORTAL_DIR_ABS)):
+        put('data/ngas.sqlite', '{0}/../NGAS/'.format(env.PORTAL_DIR_ABS))
 
 
 @task
