@@ -22,7 +22,7 @@ import os
 import time
 
 from fabric.api import run, sudo, put, env, require, local, task
-from fabric.context_managers import cd, hide, settings
+from fabric.context_managers import cd, hide, settings, prefix
 from fabric.contrib.console import confirm
 from fabric.contrib.files import append, sed, comment, exists
 from fabric.decorators import task, serial
@@ -30,23 +30,22 @@ from fabric.operations import prompt
 from fabric.utils import puts, abort, fastprint
 
 #Defaults
-USERNAME = 'ec2-user'
+USERNAME = 'admin'
+USERS = ['gavo']
+GAVO_PACKAGE = 'python-gavodachs'
 POSTFIX = False
-AMI_ID = 'ami-aecd60c7'
-INSTANCE_NAME = 'NGAS'
+AMI_ID = 'ami-50d9a439' # This is a Debian 7.1 image in US Virginia
+INSTANCE_NAME = 'GAVO Portal'
 INSTANCE_TYPE = 't1.micro'
 INSTANCES_FILE = os.path.expanduser('~/.aws/aws_instances')
-AWS_KEY = os.path.expanduser('~/.ssh/icrarkey2.pem')
-KEY_NAME = 'icrarkey2'
-ELASTIC_IP = False
-SECURITY_GROUPS = ['NGAS'] # Security group allows SSH
+AWS_KEY = os.path.expanduser('~/.ssh/icrar_ngas.pem')
+KEY_NAME = 'icrar_ngas'
+ELASTIC_IP = 'False'
+SECURITY_GROUPS = ['icrar_gavo'] # Security group allows SSH
+PORTAL_DIR = 'gavo_portal' #NGAS runtime directory
 NGAS_PYTHON_VERSION = '2.7'
-NGAS_PYTHON_URL = 'http://www.python.org/ftp/python/2.7.3/Python-2.7.3.tar.bz2'
-PORTAL_DIR = 'ngas_portal' #NGAS runtime directory
+NGAS_PYTHON_URL = 'http://www.python.org/ftp/python/2.7.5/Python-2.7.5.tar.bz2'
 NGAS_DEF_DB = '/home/ngas/NGAS/ngas.sqlite'
-GITUSER = 'icrargit'
-GITREPO = 'gitsrv.icrar.org:ngas_portal'
-ZOPE_URL = 'http://download.zope.org/Zope2/index/2.13.19 Zope2'
 
 YUM_PACKAGES = [
    'autoconf',
@@ -77,12 +76,10 @@ def set_env():
     # set environment to default for EC2, if not specified on command line.
 
     # puts(env)
-    if not env.has_key('GITUSER') or not env.GITUSER:
-        env.GITUSER = GITUSER
-    if not env.has_key('GITREPO') or not env.GITREPO:
-        env.GITREPO = GITREPO
     if not env.has_key('instance_name') or not env.instance_name:
         env.instance_name = INSTANCE_NAME
+    if not env.has_key('USERS') or not env.instance_name:
+        env.USERS = USERS
     if not env.has_key('postfix') or not env.postfix:
         env.postfix = POSTFIX
     if not env.has_key('use_elastic_ip') or not env.use_elastic_ip:
@@ -466,22 +463,53 @@ default_destination_concurrency_limit = 1" >> /etc/postfix/main.cf''')
 @task
 def user_setup():
     """
-    setup ngas users.
+    setup gavo user.
 
     TODO: sort out the ssh keys
     """
+    set_env()
 
     if not env.user:
         env.user = USERNAME # defaults to ec2-user
-    for user in ['ngas']:
-        sudo('useradd {0}'.format(user), warn_only=True)
-        sudo('mkdir /home/{0}/.ssh'.format(user), warn_only=True)
+    for user in env.USERS:
+        sudo('useradd -m {0}'.format(user), warn_only=True)
+        sudo('mkdir -p /home/{0}/.ssh'.format(user), warn_only=True)
         sudo('chmod 700 /home/{0}/.ssh'.format(user))
         sudo('chown -R {0}:{0} /home/{0}/.ssh'.format(user))
         sudo('cp /home/{0}/.ssh/authorized_keys /home/{1}/.ssh/authorized_keys'.format(env.user, user))
         sudo('chmod 700 /home/{0}/.ssh/authorized_keys'.format(user))
         sudo('chown {0}:{0} /home/{0}/.ssh/authorized_keys'.format(user))
-    env.PORTAL_DIR_ABS = '/home/ngas/{0}'.format(PORTAL_DIR)
+    env.PORTAL_DIR_ABS = '/home/{0}/{1}'.format(env.USERS[0], PORTAL_DIR)
+
+
+@task
+def setup_gavo_repo():
+    """
+    Add the GAVO repository to the system
+    """
+    ari_repo = ["deb http://vo.ari.uni-heidelberg.de/debian stable main",
+                "deb-src http://vo.ari.uni-heidelberg.de/debian stable main"]
+    append('/etc/apt/sources.list', ari_repo, use_sudo=True)
+    sudo("wget -qO - http://docs.g-vo.org/archive-key.asc | apt-key add -")
+    sudo("aptitude update")
+
+@task
+def install_gavo():
+    """
+    Install the GAVO package
+
+    NOTE: This requires the repository to be setup (setup_gavo_repo)
+    """
+    with prefix("LANG=en_US.UTF-8"):
+        install_apt(GAVO_PACKAGE)
+
+
+@task
+def fix_gavo_install():
+    with prefix("LANG=en_US.UTF-8"):
+        sudo("export PGVERSION=9.1 && pg_dropcluster --stop $PGVERSION main && \
+        pg_createcluster -d /usr/local/psql/data --locale=C -e UNICODE --lc-collate=C --lc-ctype=C $PGVERSION pgdata")
+        install_apt(GAVO_PACKAGE)
 
 
 @task
@@ -532,26 +560,6 @@ def virtualenv_setup():
         virtualenv('pip install boto')
 
 
-
-@task
-def zope_install():
-    """
-    Install zope and initialise the site
-    """
-    set_env()
-
-    with cd(env.PORTAL_DIR_ABS):
-        virtualenv('easy_install -i {0} Zope2'.format(ZOPE_URL))
-        virtualenv('easy_install Products.ZSQLMethods')
-        virtualenv('easy_install Products.SQLAlchemyDA')
-        virtualenv('easy_install psycopg2')
-        virtualenv('mkzopeinstance -d {0}/ngas -u {1}:{2}'.format(env.PORTAL_DIR_ABS, 'admin','marv4zope'))
-    with cd(env.PORTAL_DIR_ABS+'/lib/python2.7/site-packages/Products.SQLAlchemyDA-0.5.1-py2.7.egg/Products/SQLAlchemyDA'):
-        put('data/da.py.patch', '{0}/lib/python2.7/site-packages/Products.SQLAlchemyDA-0.5.1-py2.7.egg/Products/SQLAlchemyDA'.\
-            format(env.PORTAL_DIR_ABS))
-        run('patch da.py da.py.patch')
-
-
 @task
 def content_install():
     """
@@ -598,7 +606,7 @@ def test_env():
     env.user = USERNAME
     env.key_filename = AWS_KEY
     env.roledefs = {
-        'ngas' : host_names,
+        'gavo' : host_names,
     }
 
 @task
@@ -614,8 +622,7 @@ def user_deploy():
     else:
         env.PYTHON = ppath
     virtualenv_setup()
-    zope_install()
-    content_install()
+    # content_install()
 
 
 
@@ -667,8 +674,7 @@ def operations_deploy():
         if not ppath:
             python_setup()
         virtualenv_setup()
-        zope_install()
-        content_install()
+        # content_install()
     #init_deploy()
 
 
@@ -683,18 +689,41 @@ def test_deploy():
     test_env()
     # set environment to default for EC2, if not specified otherwise.
     set_env()
-    system_install()
-    if env.postfix:
-        postfix_config()
-    user_setup()
-    with settings(user='ngas'):
-        ppath = check_python()
-        if not ppath:
-            python_setup()
-        virtualenv_setup()
-        zope_install()
-        content_install()
+    setup_gavo_repo()
+    puts('****** THIS IS CURRENTLY FAILING! ********')
+    puts('****** WE JUST CATCH THE ERROR, FIX THE INSTALLATION ********')
+    puts('****** AND RUN THE apt-get again ********')
+
+    with settings(warn_only=True):
+        install_gavo()
+    puts('****** RUN apt-get again ********')
+    fix_gavo_install()
+    gavo_config()
+#    system_install()
+#    if env.postfix:
+#        postfix_config()
+#    user_setup()
+
+        #content_install()
     #init_deploy()
+
+@task
+def gavo_config():
+    """
+    Write the default configuration file to make the server visible
+    outside.
+    """
+    HOST = env.host_string
+    if HOST.count('@') > 0:
+        HOST = HOST.split('@')[1]
+    config = [
+              "[web]",
+              "bindAddress: {0}".format(HOST),
+              "serverPort: 80",
+              "serverURL: http://{0}".format(HOST),
+              ]
+    append('/etc/gavo.rc', config, use_sudo=True)
+    sudo("gavo --disable-spew serve restart")
 
 @task
 def uninstall():
