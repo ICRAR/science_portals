@@ -642,12 +642,12 @@ def user_deploy():
     """
     env.hosts = ['localhost',]
     set_env()
-    ppath = check_python()
-    if not ppath:
-        python_setup()
-    else:
-        env.PYTHON = ppath
-    virtualenv_setup()
+#    ppath = check_python()
+#    if not ppath:
+#        python_setup()
+#    else:
+#        env.PYTHON = ppath
+#    virtualenv_setup()
     setup_gavo_repo()
     puts('****** THIS IS CURRENTLY FAILING! ********')
     puts('****** WE JUST CATCH THE ERROR, FIX THE INSTALLATION ********')
