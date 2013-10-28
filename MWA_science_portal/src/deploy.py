@@ -648,6 +648,17 @@ def user_deploy():
     else:
         env.PYTHON = ppath
     virtualenv_setup()
+    setup_gavo_repo()
+    puts('****** THIS IS CURRENTLY FAILING! ********')
+    puts('****** WE JUST CATCH THE ERROR, FIX THE INSTALLATION ********')
+    puts('****** AND RUN THE apt-get again ********')
+
+    with settings(warn_only=True):
+        install_gavo()
+    puts('****** RUN apt-get again ********')
+    fix_gavo_install()
+    gavo_config()
+
     # content_install()
 
 
