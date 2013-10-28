@@ -33,11 +33,11 @@ fab test_deploy
 The tasks can be used individually and thus allow installations in very
 diverse situations.
 
-For a full deployment use the command
+For a full deployment on EC2 use the command
 
 fab --set postfix=False -f machine-setup/deploy.py test_deploy
 
-For a local installation under a normal user without sudo access
+For a local installation under a normal user WITH sudo access
 
 fab -u `whoami` -H <IP address> -f machine-setup/deploy.py user_deploy
 """
