@@ -90,6 +90,8 @@ APT_PACKAGES = [
         'libreadline-dev',
         'sqlite3',
         'libsqlite3-dev',
+        'python-dev',
+        'git',
         ]
 
 
@@ -383,7 +385,7 @@ def processCentOSErrMsg(errmsg):
 
 
 @task
-def system_install():
+def system_install_f():
     """
     Perform the system installation part.
 
@@ -395,7 +397,8 @@ def system_install():
     re = run('cat /etc/issue')
     linux_flavor = re.split()
     if (len(linux_flavor) > 0):
-        if linux_flavor[0] == 'CentOS':
+        if linux_flavor[0] == 'CentOS' or linux_flavor[0] == 'Ubuntu' \
+           or linux_flavor[0] == 'Debian':
             linux_flavor = linux_flavor[0]
         elif linux_flavor[0] == 'Amazon':
             linux_flavor = ' '.join(linux_flavor[:2])
@@ -406,11 +409,13 @@ def system_install():
         for package in YUM_PACKAGES:
             install_yum(package)
 
-    elif (linux_flavor == 'Ubuntu'):
+    elif (linux_flavor in ['Ubuntu', 'Debian']):
+        errmsg = sudo('apt-get -qq -y update', combine_stderr=True, warn_only=True)
         for package in APT_PACKAGES:
             install_apt(package)
     else:
         abort("Unknown linux flavor detected: {0}".format(re))
+
 
 
 @task
@@ -505,6 +510,7 @@ def user_setup():
         sudo('cp /home/{0}/.ssh/authorized_keys /home/{1}/.ssh/authorized_keys'.format(env.user, user))
         sudo('chmod 700 /home/{0}/.ssh/authorized_keys'.format(user))
         sudo('chown {0}:{0} /home/{0}/.ssh/authorized_keys'.format(user))
+        sudo('usermod -a -G sudo %s'.format(user)) # add gavo user to sudo to allow installation
     env.PORTAL_DIR_ABS = '/home/{0}/{1}'.format(env.USERS[0], PORTAL_DIR)
 
 
@@ -638,9 +644,10 @@ def test_env():
 @task
 def user_deploy():
     """
-    Deploy the system as a normal user without sudo access
+    Deploy the system as a normal user WITH sudo access
     """
     env.hosts = ['localhost',]
+    env.host_string = env.hosts[0]
     set_env()
 #    ppath = check_python()
 #    if not ppath:
