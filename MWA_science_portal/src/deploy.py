@@ -709,7 +709,7 @@ def operations_deploy():
         env.user = 'root'
     # set environment to default, if not specified otherwise.
     set_env()
-    system_install()
+    system_install_f()
     if env.postfix:
         postfix_config()
     user_setup()
