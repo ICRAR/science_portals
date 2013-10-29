@@ -114,8 +114,8 @@ def set_env():
         env.use_elastic_ip = ELASTIC_IP
     if not env.user or not env.user:
         env.user = USERNAME
-    if not env.has_key('key_filename') or not env.key_filename:
-        env.key_filename = AWS_KEY
+#    if not env.has_key('key_filename') or not env.key_filename:
+#        env.key_filename = AWS_KEY
     require('hosts', provided_by=[test_env])
     if not env.has_key('PORTAL_DIR_ABS') or not env.PORTAL_DIR_ABS:
         env.PORTAL_DIR_ABS = '{0}/{1}'.format(run('echo $PWD'), PORTAL_DIR)
